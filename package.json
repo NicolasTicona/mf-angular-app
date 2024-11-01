@@ -4,9 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --deploy-url http://127.0.0.1:8080/ && node generate-manifest.js",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "manifest": "node generate-manifest.js"
   },
   "private": true,
   "dependencies": {

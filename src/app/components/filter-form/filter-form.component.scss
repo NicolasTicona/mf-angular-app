@@ -1,0 +1,25 @@
+.form {
+    text-align: end;
+}
+
+input {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #DD2D4A;
+    border-radius: 4px;
+}
+
+button {
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 10px;
+    background-color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button.submit {
+    background-color: #DD2D4A;
+    color: #fff;
+}

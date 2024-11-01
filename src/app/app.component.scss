@@ -1,0 +1,28 @@
+.container {
+    width: 1000px;
+    margin: auto;
+}
+
+.main {
+    display: flex;
+    margin: 50px auto;
+    justify-content: space-between;
+}
+
+.cards {
+  width: 600px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.form {
+    align-self: center;
+}
+
+
+.support {
+    position: absolute;
+    right: 100px;
+    bottom: 100px;
+}
