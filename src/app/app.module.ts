@@ -20,6 +20,6 @@ import { FilterFormComponent } from './components/filter-form/filter-form.compon
     FilterFormComponent
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }
