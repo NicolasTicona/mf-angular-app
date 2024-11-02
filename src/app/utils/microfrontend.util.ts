@@ -26,8 +26,6 @@ async function loadViteMicrofrontend(microfrontend: Microfrontend, nodeToLoadIn:
             const customEvent = event as CustomEvent;
 
             if (customEvent.detail.name === microfrontend.name) {
-                console.log('aquí')
-
                 const renderEvent = new CustomEvent('MICROFRONTEND_RENDER', {
                     detail: {
                         nodeToLoadIn,
