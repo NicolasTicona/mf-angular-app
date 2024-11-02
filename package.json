@@ -4,7 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build --deploy-url http://127.0.0.1:8080/ && node generate-manifest.js",
+    "build:dev": "ng build --deploy-url https://mf-angular-app-dev.vercel.app/ && node generate-manifest.js",
+    "build:prod": "ng build --deploy-url https://mf-angular-app-prod.vercel.app/ --configuration production && node generate-manifest.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "manifest": "node generate-manifest.js"
