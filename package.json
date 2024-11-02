@@ -4,8 +4,10 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build:dev": "ng build --deploy-url https://mf-angular-app-dev.vercel.app/ && node generate-manifest.js",
-    "build:prod": "ng build --deploy-url https://mf-angular-app-prod.vercel.app/ --configuration production && node generate-manifest.js",
+    "preview": "npm run build:local && http-server ./dist -p 4001",
+    "build:local": "ng build --configuration local && node generate-manifest.js",
+    "build:dev": "ng build --configuration development && node generate-manifest.js",
+    "build:prod": "ng build --configuration production && node generate-manifest.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "manifest": "node generate-manifest.js"
@@ -29,6 +31,7 @@
     "@angular/cli": "~16.2.0",
     "@angular/compiler-cli": "^16.2.0",
     "@types/jasmine": "~4.3.0",
+    "http-server": "^14.1.1",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

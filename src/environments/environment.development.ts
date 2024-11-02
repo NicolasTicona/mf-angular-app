@@ -1,11 +1,12 @@
 import { Environment } from './environment.type';
 
 export const environment: Environment = {
+    name: 'development',
     microfrontends: {
         'react-app': {
             name: 'react-app',
-            origin: 'http://127.0.0.1:8080',
-            manifestPath: 'http://127.0.0.1:8080/.vite/manifest.json',
+            origin: 'https://mf-react-app-dev.vercel.app/',
+            manifestPath: 'https://mf-react-app-dev.vercel.app/.vite/manifest.json',
             buildType: 'vite'
         }
     }

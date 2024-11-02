@@ -1,4 +1,5 @@
 export type Environment = {
+    name: string;
     microfrontends: {
         [key: string]: Microfrontend
     }
