@@ -2,8 +2,42 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0 24px;
+    height: 64px;
+    background-color: #020617;
+    border-bottom: 1px solid var(--border);
+}
+
+.header__left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header__right {
+    display: flex;
+    align-items: center;
 }
 
 h1 {
-    color: #DD2D4A;
+    color: var(--text);
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.badge--angular {
+    background-color: rgba(221, 0, 49, 0.15);
+    color: var(--angular-red);
+    border: 1px solid rgba(221, 0, 49, 0.3);
 }

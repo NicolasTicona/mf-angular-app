@@ -1,25 +1,91 @@
-.form {
-    text-align: end;
+.search-panel {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.search-panel__header {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+.search-panel__title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.search-panel__body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 0.875rem;
+    pointer-events: none;
 }
 
 input {
-    box-sizing: border-box;
     width: 100%;
-    padding: 10px;
-    border: 1px solid #DD2D4A;
-    border-radius: 4px;
+    padding: 9px 12px 9px 34px;
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 0.875rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+
+    &::placeholder {
+        color: var(--muted);
+    }
+
+    &:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
 }
 
-button {
-    padding: 8px;
-    border-radius: 8px;
-    margin-top: 10px;
-    background-color: #fff;
-    border: none;
+.actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: inherit;
     cursor: pointer;
+    border: none;
+    transition: opacity 0.15s;
+
+    &:hover { opacity: 0.85; }
 }
 
-button.submit {
-    background-color: #DD2D4A;
-    color: #fff;
+.btn--ghost {
+    background-color: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+}
+
+.btn--primary {
+    background-color: var(--accent);
+    color: #0F172A;
 }

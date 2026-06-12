@@ -5,9 +5,10 @@ export const environment: Environment = {
     microfrontends: {
         'react-app': {
             name: 'react-app',
-            origin: 'https://mf-react-app-prod.vercel.app/',
-            manifestPath: 'https://mf-react-app-prod.vercel.app/.vite/manifest.json',
-            buildType: 'vite'
+            origin: 'https://nicolasticona.github.io/mf-react-app',
+            manifestPath: 'https://nicolasticona.github.io/mf-react-app/.vite/manifest.json',
+            buildType: 'vite',
+            cacheStrategy: 'no-cache',
         }
     }
 };

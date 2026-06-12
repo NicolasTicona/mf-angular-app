@@ -2,6 +2,16 @@
   <app-header></app-header>
 
   <div class="main">
+    <aside class="event-log-sidebar">
+      <div class="event-log-sidebar__title">// Event Log</div>
+      <div class="event-log-sidebar__empty" *ngIf="eventLog.events.length === 0">
+        <span>Click "Support" to start</span>
+      </div>
+      <div class="event-log-sidebar__item" *ngFor="let event of eventLog.events">
+        {{ event }}
+      </div>
+    </aside>
+
     <div class="cards">
       <app-card
         *ngFor="let topic of topics"

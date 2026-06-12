@@ -7,7 +7,7 @@
     "preview": "npm run build:local && http-server ./dist -p 4001",
     "build:local": "ng build --configuration local && node generate-manifest.js",
     "build:dev": "ng build --configuration development && node generate-manifest.js",
-    "build:prod": "ng build --configuration production && node generate-manifest.js",
+    "build:prod": "ng build --configuration production --base-href /mf-angular-app/ && node generate-manifest.js",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "manifest": "node generate-manifest.js"

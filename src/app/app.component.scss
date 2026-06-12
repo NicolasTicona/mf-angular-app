@@ -1,28 +1,67 @@
 .container {
-    width: 1000px;
-    margin: auto;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
 }
 
 .main {
     display: flex;
-    margin: 50px auto;
-    justify-content: space-between;
+    gap: 24px;
+    margin-top: 32px;
+    align-items: flex-start;
+}
+
+.event-log-sidebar {
+    width: 220px;
+    flex-shrink: 0;
+    background-color: #020617;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    position: sticky;
+    top: 24px;
+
+    &__title {
+        padding: 10px 14px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--muted);
+        border-bottom: 1px solid var(--border);
+        background-color: rgba(255, 255, 255, 0.02);
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    &__empty {
+        padding: 16px 14px;
+        font-size: 0.72rem;
+        color: #334155;
+        font-style: italic;
+    }
+
+    &__item {
+        padding: 7px 14px;
+        font-size: 0.72rem;
+        color: #22D3EE;
+        border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+        animation: slideIn 0.15s ease;
+        line-height: 1.5;
+
+        &:last-child {
+            border-bottom: none;
+        }
+    }
 }
 
 .cards {
-  width: 600px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
 }
 
-.form {
-    align-self: center;
-}
-
-
-.support {
-    position: absolute;
-    right: 100px;
-    bottom: 100px;
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
 }

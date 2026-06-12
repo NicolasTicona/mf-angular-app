@@ -19,7 +19,7 @@ export function loadMicrofrontend(name: string, nodeToLoadIn: HTMLElement): void
 
 async function loadViteMicrofrontend(microfrontend: Microfrontend, nodeToLoadIn: HTMLElement) {
     try {
-        const response = await fetch(`${microfrontend.manifestPath}`);
+        const response = await fetch(microfrontend.manifestPath, { cache: microfrontend.cacheStrategy ?? 'no-store' });
         const manifest = await response.json();
 
         window.addEventListener('MICROFRONTEND_LOADED', (event: Event) => {

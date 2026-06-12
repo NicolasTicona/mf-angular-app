@@ -1,16 +1,38 @@
-.support-icon {
-    width: 55px;
-    height: 55px;
-    background-color: #118FC9;
-    border-radius: 50%;
-    display: grid;
+.support-btn {
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background-color: transparent;
+    border: 1px solid rgba(97, 218, 251, 0.4);
+    border-radius: 6px;
+    color: var(--react-cyan);
+    font-size: 0.875rem;
+    font-family: inherit;
+    font-weight: 500;
     cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+
+    &:hover {
+        background-color: rgba(97, 218, 251, 0.08);
+        border-color: var(--react-cyan);
+        box-shadow: 0 0 12px rgba(97, 218, 251, 0.2);
+    }
+}
+
+.react-badge {
+    padding: 1px 7px;
+    border-radius: 9999px;
+    background-color: rgba(97, 218, 251, 0.15);
+    border: 1px solid rgba(97, 218, 251, 0.3);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
 }
 
 .microfrontend-container {
     position: fixed;
-    bottom: 100px;
-    right: 77px;
+    bottom: 24px;
+    right: 24px;
 }

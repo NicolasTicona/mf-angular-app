@@ -1,19 +1,35 @@
-* {
-    font-size: 12px
-};
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-h1 {
-    font-size: 4em;
+:root {
+    --angular-red: #DD0031;
+    --react-cyan: #61DAFB;
+    --react-cyan-dark: #0E7490;
+    --bg: #0F172A;
+    --surface: #1E293B;
+    --border: #334155;
+    --text: #E2E8F0;
+    --muted: #94A3B8;
+    --accent: #22D3EE;
 }
 
-h4 {
-    font-size: 2.5em;
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
-p {
-    font-size: 2em;
+html, body {
+    height: 100%;
 }
 
-button, input {
-    font-size: 1.5em;
+body {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    background-color: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
 }
+
+h1 { font-size: 1.5rem; font-weight: 700; }
+h4 { font-size: 1rem; font-weight: 600; }
+p  { font-size: 0.875rem; }

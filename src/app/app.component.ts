@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { TOPICS } from './mocks/topics.mock';
+import { EventLogService } from './services/event-log.service';
+
 @Component({
     selector: 'app-root',
     templateUrl: './app.component.html',
@@ -7,4 +9,6 @@ import { TOPICS } from './mocks/topics.mock';
 })
 export class AppComponent {
     public topics = TOPICS;
+
+    constructor(public eventLog: EventLogService) {}
 }
