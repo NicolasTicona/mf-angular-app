@@ -41,6 +41,20 @@ export class DummySupportComponent {
             });
         }, { once: true });
 
+        window.addEventListener('SUPPORT_MESSAGE_SENT', (event: Event) => {
+            const ce = event as CustomEvent;
+            this.zone.run(() => {
+                this.eventLog.push(`💬 User → Angular: "${ce.detail.message}"`);
+            });
+        });
+
+        window.addEventListener('CARD_SELECTED', (event: Event) => {
+            const ce = event as CustomEvent;
+            this.zone.run(() => {
+                this.eventLog.push(`📌 Angular → React: "${ce.detail.title}"`);
+            });
+        });
+
         loadMicrofrontend(
             environment.microfrontends['react-app'].name,
             this.microfrontContainer.nativeElement
