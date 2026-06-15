@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mf-angular-app — Architecture Deck</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-okaidia.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f5f4f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    #deck {
+      width: 760px;
+      background: #fff;
+      border: 0.5px solid #d8d6ce;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.10);
+    }
+
+    /* ── header ── */
+    #dk-hd {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 20px;
+      border-bottom: 0.5px solid #e8e6de;
+      background: #faf9f6;
+    }
+    #prog-track {
+      flex: 1;
+      height: 3px;
+      background: #e8e6de;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    #prog-fill {
+      height: 100%;
+      background: #534AB7;
+      border-radius: 2px;
+      transition: width 0.25s ease;
+    }
+    #ctr {
+      font-size: 11px;
+      color: #888;
+      white-space: nowrap;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    /* ── slide window ── */
+    #sw {
+      height: 470px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 28px 32px;
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      overflow-y: auto;
+    }
+    .slide.active { display: flex; }
+
+    /* ── footer ── */
+    #dk-ft {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 20px;
+      border-top: 0.5px solid #e8e6de;
+      background: #faf9f6;
+    }
+    #sname {
+      font-size: 12px;
+      color: #888;
+    }
+    .btn-nav {
+      background: none;
+      border: 0.5px solid #d8d6ce;
+      border-radius: 6px;
+      padding: 5px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      color: #444;
+      transition: background 0.15s;
+    }
+    .btn-nav:hover:not(:disabled) { background: #EEEDFE; color: #534AB7; border-color: #AFA9EC; }
+    .btn-nav:disabled { opacity: 0.35; cursor: default; }
+
+    /* ── typography ── */
+    .stag {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #534AB7;
+      font-weight: 600;
+    }
+    .stitle {
+      font-size: 22px;
+      font-weight: 500;
+      color: #1a1a18;
+      line-height: 1.25;
+    }
+    .sbody {
+      font-size: 13px;
+      line-height: 1.6;
+      color: #444441;
+    }
+
+    /* ── app chip ── */
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 0.5px solid;
+    }
+    .chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .chip-meta { font-size: 11px; font-weight: 400; opacity: 0.7; margin-left: 2px; }
+    .chip-host { background: #EEEDFE; color: #534AB7; border-color: #AFA9EC; }
+    .chip-host .chip-dot { background: #534AB7; }
+    .chip-remote { background: #E1F5EE; color: #0F6E56; border-color: #5DCAA5; }
+    .chip-remote .chip-dot { background: #0F6E56; }
+
+    /* ── package badges ── */
+    .badges { display: flex; gap: 6px; flex-wrap: wrap; }
+    .badge {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+    .badge-host { background: #EEEDFE; color: #534AB7; }
+    .badge-remote { background: #E1F5EE; color: #0F6E56; }
+    .badge-neutral { background: #F1EFE8; color: #5F5E5A; }
+
+    /* ── concept cards ── */
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .ccard {
+      background: rgba(0,0,0,0.03);
+      border: 0.5px solid #e0ddd6;
+      border-radius: 8px;
+      padding: 14px;
+    }
+    .ccard h3 { font-size: 13px; font-weight: 600; color: #1a1a18; margin-bottom: 6px; }
+    .ccard p { font-size: 12px; color: #666; line-height: 1.55; }
+
+    /* ── step list ── */
+    .step-list { display: flex; flex-direction: column; gap: 9px; }
+    .step-item { display: flex; align-items: flex-start; gap: 10px; }
+    .step-circle {
+      width: 21px; height: 21px; border-radius: 50%;
+      background: #EEEDFE; color: #534AB7;
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 1px;
+    }
+    .step-body { font-size: 13px; color: #444441; line-height: 1.5; }
+
+    /* ── checklist ── */
+    .check-list { display: flex; flex-direction: column; gap: 8px; }
+    .check-item { display: flex; align-items: flex-start; gap: 10px; }
+    .check-circle {
+      width: 19px; height: 19px; border-radius: 50%;
+      background: #E1F5EE; color: #0F6E56;
+      font-size: 10px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .check-body { font-size: 13px; color: #444441; line-height: 1.5; }
+    .check-body code { font-size: 11px; background: #F1EFE8; padding: 1px 5px; border-radius: 4px; font-family: "SF Mono","Fira Code","Cascadia Code",monospace; }
+
+    /* ── info box ── */
+    .info-box {
+      border-left: 2.5px solid #7F77DD;
+      background: rgba(83,74,183,0.05);
+      padding: 10px 14px;
+      border-radius: 0 6px 6px 0;
+      font-size: 12px;
+      color: #444441;
+      line-height: 1.6;
+    }
+
+    /* ── table ── */
+    .dt { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .dt th { text-align: left; font-weight: 600; color: #888; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; padding: 6px 8px; border-bottom: 0.5px solid #e0ddd6; }
+    .dt td { padding: 7px 8px; border-bottom: 0.5px solid #eceae2; color: #333; vertical-align: top; }
+    .dt tr:last-child td { border-bottom: none; }
+    .dt code { font-family: "SF Mono","Fira Code","Cascadia Code",monospace; font-size: 11px; background: #F1EFE8; padding: 1px 5px; border-radius: 4px; }
+    .yes-badge { display: inline-block; background: #E1F5EE; color: #0F6E56; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+    .no-badge  { display: inline-block; background: #F1EFE8; color: #5F5E5A; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 500; }
+
+    /* ── code blocks ── */
+    pre[class*="language-"] {
+      font-size: 11.5px !important;
+      line-height: 1.55 !important;
+      border-radius: 8px !important;
+      margin: 0 !important;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    code[class*="language-"] { font-size: 11.5px !important; font-family: "SF Mono","Fira Code","Cascadia Code",monospace !important; }
+
+    /* ── two-col layout ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .two-col-label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+
+    /* ── pkg cards (further reading) ── */
+    .pkg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .pkg-card {
+      display: flex; flex-direction: column; gap: 4px;
+      border: 0.5px solid #e0ddd6; border-radius: 8px;
+      padding: 12px 14px;
+    }
+    .pkg-card a { font-size: 13px; font-weight: 600; color: #534AB7; text-decoration: none; }
+    .pkg-card a:hover { text-decoration: underline; }
+    .pkg-card p { font-size: 12px; color: #666; line-height: 1.4; }
+
+    /* ── slide 1 cover ── */
+    .cover-desc { font-size: 15px; color: #666; line-height: 1.6; max-width: 540px; margin-top: 4px; }
+    .cover-urls { display: flex; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+    .cover-url { font-size: 12px; color: #888; font-family: "SF Mono","Fira Code",monospace; }
+
+    /* ── event table colors ── */
+    .ev-ar { color: #993556; font-weight: 600; font-size: 12px; }
+    .ev-name { font-family: "SF Mono","Fira Code",monospace; font-size: 11px; background: rgba(212,83,126,0.07); padding: 2px 6px; border-radius: 4px; color: #993556; }
+
+    /* ── dark mode ── */
+    @media (prefers-color-scheme: dark) {
+      body { background: #1a1a18; }
+      #deck { background: #242422; border-color: rgba(255,255,255,0.1); box-shadow: 0 4px 32px rgba(0,0,0,0.5); }
+      #dk-hd, #dk-ft { background: #1e1e1c; border-color: rgba(255,255,255,0.08); }
+      #prog-track { background: rgba(255,255,255,0.1); }
+      .stitle { color: #f0f0ee; }
+      .sbody { color: #cccac2; }
+      .ccard { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.1); }
+      .ccard h3 { color: #f0f0ee; }
+      .ccard p { color: #999; }
+      .btn-nav { background: #2a2a28; border-color: rgba(255,255,255,0.15); color: #ccc; }
+      .btn-nav:hover:not(:disabled) { background: #2d2a4a; color: #9b93e8; border-color: #6b62c4; }
+      #sname { color: #666; }
+      .dt th { color: #666; border-color: rgba(255,255,255,0.08); }
+      .dt td { color: #ccc; border-color: rgba(255,255,255,0.06); }
+      .dt code { background: #2a2a28; color: #ccc; }
+      .info-box { background: rgba(83,74,183,0.12); color: #ccc; }
+      .pkg-card { border-color: rgba(255,255,255,0.1); background: #2a2a28; }
+      .pkg-card p { color: #999; }
+      .step-body, .check-body { color: #ccc; }
+      .check-body code { background: #2a2a28; color: #ccc; }
+      .cover-desc { color: #999; }
+      .cover-url { color: #666; }
+      .no-badge { background: #2a2a28; }
+    }
+  </style>
+</head>
+<body>
+<div id="deck">
+  <div id="dk-hd">
+    <div id="prog-track"><div id="prog-fill" style="width:8.33%"></div></div>
+    <div id="ctr">1 / 12</div>
+  </div>
+
+  <div id="sw">
+
+    <!-- SLIDE 1: Cover -->
+    <div class="slide active">
+      <div class="stag">Microfrontend Architecture</div>
+      <div class="stitle">mf-angular-app</div>
+      <div class="cover-desc">Angular 16 shell that loads a React 18 remote at runtime via Vite manifest + DOM injection. No Webpack Module Federation — custom ESM loading over native CustomEvents.</div>
+      <div class="chips">
+        <div class="chip chip-host"><div class="chip-dot"></div>mf-angular-app<span class="chip-meta">Angular 16 · :4200</span></div>
+        <div class="chip chip-remote"><div class="chip-dot"></div>mf-react-app<span class="chip-meta">React 18 + Vite · :8080</span></div>
+      </div>
+      <div class="badges">
+        <span class="badge badge-host">@angular/core ^16.2</span>
+        <span class="badge badge-remote">react ^18.3</span>
+        <span class="badge badge-remote">vite ^5.4</span>
+        <span class="badge badge-neutral">zone.js ~0.13</span>
+        <span class="badge badge-neutral">http-server ^14.1</span>
+        <span class="badge badge-neutral">GitHub Pages CI</span>
+      </div>
+      <div class="cover-urls">
+        <span class="cover-url">shell → https://nicolasticona.github.io/mf-angular-app/</span>
+        <span class="cover-url">remote → https://nicolasticona.github.io/mf-react-app/</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 2: Architecture overview -->
+    <div class="slide">
+      <div class="stag">Architecture</div>
+      <div class="stitle">System overview</div>
+      <svg viewBox="0 0 700 340" style="width:100%;height:auto;flex-shrink:0" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#AFA9EC"/>
+          </marker>
+          <marker id="arr-ev" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <polygon points="0 0, 8 3, 0 6" fill="#D4537E"/>
+          </marker>
+        </defs>
+
+        <!-- Host box -->
+        <rect x="200" y="12" width="300" height="90" rx="8" fill="#EEEDFE" stroke="#AFA9EC" stroke-width="1"/>
+        <text x="350" y="34" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#534AB7" font-weight="600" letter-spacing="1">SHELL · ANGULAR 16 · :4200</text>
+        <text x="350" y="56" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#534AB7" font-weight="500">mf-angular-app</text>
+        <text x="350" y="76" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#7F77DD">DummySupportComponent</text>
+        <text x="350" y="94" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#7F77DD">microfrontend.util.ts · EventLogService</text>
+
+        <!-- Manifest box -->
+        <rect x="250" y="148" width="200" height="50" rx="8" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="1"/>
+        <text x="350" y="169" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#5F5E5A" font-weight="600" letter-spacing="1">VITE MANIFEST</text>
+        <text x="350" y="187" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#444441">.vite/manifest.json</text>
+
+        <!-- Remote box -->
+        <rect x="200" y="252" width="300" height="75" rx="8" fill="#E1F5EE" stroke="#5DCAA5" stroke-width="1"/>
+        <text x="350" y="273" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#0F6E56" font-weight="600" letter-spacing="1">REMOTE · REACT 18 · :8080</text>
+        <text x="350" y="293" text-anchor="middle" font-family="sans-serif" font-size="13" fill="#0F6E56" font-weight="500">mf-react-app</text>
+        <text x="350" y="313" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#4CAF85">main.jsx · ContactSupport</text>
+
+        <!-- Host → Manifest (fetch) -->
+        <line x1="350" y1="102" x2="350" y2="146" stroke="#AFA9EC" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+        <rect x="355" y="118" width="70" height="16" rx="3" fill="#faf9f6"/>
+        <text x="391" y="130" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#534AB7">fetch manifest</text>
+
+        <!-- Manifest → inject scripts -->
+        <line x1="350" y1="198" x2="350" y2="250" stroke="#AFA9EC" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr)"/>
+        <rect x="355" y="214" width="80" height="16" rx="3" fill="#faf9f6"/>
+        <text x="395" y="226" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#534AB7">inject script+css</text>
+
+        <!-- Events: MICROFRONTEND_LOADED (React→Angular) -->
+        <path d="M 200 282 C 120 282, 120 57, 200 57" stroke="#D4537E" stroke-width="1.2" stroke-dasharray="4,3" fill="none" marker-end="url(#arr-ev)"/>
+        <text x="90" y="173" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#993556" transform="rotate(-90, 90, 173)">MICROFRONTEND_LOADED</text>
+
+        <!-- Events: MICROFRONTEND_RENDER (Angular→React) -->
+        <path d="M 200 70 C 148 70, 148 270, 200 270" stroke="#D4537E" stroke-width="1.2" stroke-dasharray="4,3" fill="none" marker-end="url(#arr-ev)"/>
+        <text x="152" y="173" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#993556" transform="rotate(-90, 152, 173)">MICROFRONTEND_RENDER</text>
+
+        <!-- CARD_SELECTED -->
+        <path d="M 500 57 C 570 57, 570 282, 500 282" stroke="#D4537E" stroke-width="1.2" stroke-dasharray="4,3" fill="none" marker-end="url(#arr-ev)"/>
+        <text x="572" y="173" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#993556" transform="rotate(90, 572, 173)">CARD_SELECTED</text>
+
+        <!-- SUPPORT_MESSAGE_SENT -->
+        <path d="M 500 270 C 620 270, 620 70, 500 70" stroke="#D4537E" stroke-width="1.2" stroke-dasharray="4,3" fill="none" marker-end="url(#arr-ev)"/>
+        <text x="624" y="173" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#993556" transform="rotate(90, 624, 173)">SUPPORT_MESSAGE_SENT</text>
+
+        <!-- Legend -->
+        <line x1="30" y1="320" x2="60" y2="320" stroke="#AFA9EC" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="65" y="324" font-family="sans-serif" font-size="10" fill="#888">manifest / script load</text>
+        <line x1="200" y1="320" x2="230" y2="320" stroke="#D4537E" stroke-width="1.2" stroke-dasharray="4,3"/>
+        <text x="235" y="324" font-family="sans-serif" font-size="10" fill="#888">CustomEvent</text>
+      </svg>
+    </div>
+
+    <!-- SLIDE 3: Composition mechanism -->
+    <div class="slide">
+      <div class="stag">Composition</div>
+      <div class="stitle">Vite manifest + DOM injection</div>
+      <div class="card-grid">
+        <div class="ccard">
+          <h3>1 · Manifest fetch</h3>
+          <p>On button click, Angular fetches <code>.vite/manifest.json</code> from the React origin. Cache strategy is <code>no-store</code> locally and <code>no-cache</code> (ETag) on deployed envs.</p>
+        </div>
+        <div class="ccard">
+          <h3>2 · Script injection</h3>
+          <p>The manifest maps <code>index.html</code> → hashed JS + CSS filenames. Angular creates <code>&lt;script type="module"&gt;</code> and <code>&lt;link rel="stylesheet"&gt;</code> and appends them to <code>&lt;head&gt;</code>.</p>
+        </div>
+        <div class="ccard">
+          <h3>3 · MICROFRONTEND_LOADED</h3>
+          <p>React's <code>main.jsx</code> runs, detects hosted mode (<code>isBootstrap = false</code>), and dispatches this event. Angular was already listening with <code>{ once: true }</code>.</p>
+        </div>
+        <div class="ccard">
+          <h3>4 · MICROFRONTEND_RENDER</h3>
+          <p>Angular replies with this event carrying the container <code>HTMLElement</code>. React calls <code>createRoot(detail.nodeToLoadIn).render(&lt;App /&gt;)</code>. Chat overlay is live.</p>
+        </div>
+      </div>
+      <div class="info-box">No Webpack Module Federation. No shared module negotiation. Each app bundles its own dependencies. The only contract is the event protocol and the manifest format.</div>
+    </div>
+
+    <!-- SLIDE 4: Boot sequence -->
+    <div class="slide">
+      <div class="stag">Bootstrap</div>
+      <div class="stitle">Orchestration sequence</div>
+      <div class="step-list">
+        <div class="step-item"><div class="step-circle">1</div><div class="step-body">User clicks 💬 Support button in <strong>HeaderComponent</strong></div></div>
+        <div class="step-item"><div class="step-circle">2</div><div class="step-body"><strong>DummySupportComponent.loadMicrofront()</strong> checks <code>alreadyLoaded</code> guard — prevents double-load</div></div>
+        <div class="step-item"><div class="step-circle">3</div><div class="step-body">Registers <code>MICROFRONTEND_LOADED</code> and <code>MICROFRONTEND_RENDER</code> listeners (<code>{ once: true }</code>). Registers persistent listeners for <code>SUPPORT_MESSAGE_SENT</code> and <code>CARD_SELECTED</code></div></div>
+        <div class="step-item"><div class="step-circle">4</div><div class="step-body">Calls <code>loadMicrofrontend('react-app', containerEl)</code> → util fetches <code>.vite/manifest.json</code></div></div>
+        <div class="step-item"><div class="step-circle">5</div><div class="step-body">Util injects <code>&lt;script type="module"&gt;</code> + <code>&lt;link&gt;</code> into <code>&lt;head&gt;</code> from hashed manifest filenames</div></div>
+        <div class="step-item"><div class="step-circle">6</div><div class="step-body">React <strong>main.jsx</strong> executes — <code>isBootstrap</code> is <code>false</code> — dispatches <code>MICROFRONTEND_LOADED</code></div></div>
+        <div class="step-item"><div class="step-circle">7</div><div class="step-body">Angular listens → dispatches <code>MICROFRONTEND_RENDER</code> with <code>{ name, nodeToLoadIn }</code></div></div>
+        <div class="step-item"><div class="step-circle">8</div><div class="step-body">React calls <code>createRoot(detail.nodeToLoadIn).render(&lt;App /&gt;)</code> — ContactSupport chat overlay is mounted</div></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 5: Host loading pattern -->
+    <div class="slide">
+      <div class="stag">Host</div>
+      <div class="stitle">manifest fetch + script injection</div>
+      <pre><code class="language-typescript">// src/app/utils/microfrontend.util.ts
+async function loadViteMicrofrontend(
+  microfrontend: Microfrontend,
+  nodeToLoadIn: HTMLElement
+) {
+  const response = await fetch(
+    microfrontend.manifestPath,
+    { cache: microfrontend.cacheStrategy ?? 'no-store' }
+  );
+  const manifest = await response.json();
+
+  window.addEventListener('MICROFRONTEND_LOADED', (event: Event) => {
+    const ce = event as CustomEvent;
+    if (ce.detail.name === microfrontend.name) {
+      window.dispatchEvent(new CustomEvent('MICROFRONTEND_RENDER', {
+        detail: { nodeToLoadIn, name: microfrontend.name }
+      }));
+    }
+  });
+
+  const index = manifest['index.html'];
+  const script = document.createElement('script');
+  script.src = `${microfrontend.origin}/${index.file}`;
+  script.type = 'module';
+  const css = document.createElement('link');
+  css.rel = 'stylesheet';
+  css.href = `${microfrontend.origin}/${index.css[0]}`;
+  document.head.appendChild(script);
+  document.head.appendChild(css);
+}</code></pre>
+    </div>
+
+    <!-- SLIDE 6: Remote composition config -->
+    <div class="slide">
+      <div class="stag">Remote</div>
+      <div class="stitle">Vite config + dual-mode bootstrap</div>
+      <pre><code class="language-javascript">// mf-react-app/vite.config.js
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+  base: process.env.VITE_BASE_PATH ?? '/',
+  build: {
+    manifest: true,   // produces dist/.vite/manifest.json
+  },
+  server: { port: 3000 }
+})
+
+// mf-react-app/src/constants/app.constants.js
+const whiteListBootstrap = ['http://localhost:3000', 'http://127.0.0.1:8080'];
+
+export const isBootstrap =
+  whiteListBootstrap.includes(window.location.origin) ||
+  window.location.pathname.startsWith('/mf-react-app');
+// pathname check handles GitHub Pages shared origin</code></pre>
+    </div>
+
+    <!-- SLIDE 7: Integration layer -->
+    <div class="slide">
+      <div class="stag">Integration layer</div>
+      <div class="stitle">React entry — hosted vs standalone</div>
+      <pre><code class="language-javascript">// mf-react-app/src/main.jsx
+import { isBootstrap } from './constants/app.constants.js';
+
+if (isBootstrap) {
+  // standalone: mount into static #react-root in index.html
+  createRoot(document.getElementById("react-root"))
+    .render(<StrictMode><App /></StrictMode>);
+} else {
+  // hosted: wait for Angular to provide container node
+  window.addEventListener("MICROFRONTEND_RENDER", ({ detail }) => {
+    if (detail.name === "react-app") {
+      createRoot(detail.nodeToLoadIn)
+        .render(<StrictMode><App /></StrictMode>);
+    }
+  });
+
+  // signal Angular that scripts are loaded
+  window.dispatchEvent(
+    new CustomEvent("MICROFRONTEND_LOADED", {
+      detail: { name: "react-app" }
+    })
+  );
+}</code></pre>
+    </div>
+
+    <!-- SLIDE 8: Shared dependencies -->
+    <div class="slide">
+      <div class="stag">Dependencies</div>
+      <div class="stitle">Shared dependency strategy</div>
+      <table class="dt">
+        <thead>
+          <tr><th>Package</th><th>Angular shell</th><th>React remote</th><th>Notes</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>react</code> / <code>react-dom</code></td><td><span class="no-badge">not used</span></td><td><span class="yes-badge">bundled</span></td><td>Remote bundles its own React — no sharing</td></tr>
+          <tr><td><code>@angular/core</code> (+ platform, forms…)</td><td><span class="yes-badge">bundled</span></td><td><span class="no-badge">not used</span></td><td>Angular framework; remote never touches it</td></tr>
+          <tr><td><code>zone.js</code></td><td><span class="yes-badge">bundled</span></td><td><span class="no-badge">not used</span></td><td>Angular change detection only</td></tr>
+          <tr><td><code>rxjs</code></td><td><span class="yes-badge">bundled</span></td><td><span class="no-badge">not used</span></td><td>Angular dep; not used for cross-app comms</td></tr>
+          <tr><td><code>http-server</code></td><td><span class="yes-badge">devDep</span></td><td><span class="yes-badge">devDep</span></td><td>Serves <code>dist/</code> in preview mode for both apps</td></tr>
+          <tr><td><code>vite</code></td><td><span class="no-badge">not used</span></td><td><span class="yes-badge">build tool</span></td><td>Produces the manifest Angular reads at runtime</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box">No shared packages between the two apps at runtime. Each app is fully self-contained. The integration contract is purely the event protocol — framework versions are independent.</div>
+    </div>
+
+    <!-- SLIDE 9: Build artifacts -->
+    <div class="slide">
+      <div class="stag">Build</div>
+      <div class="stitle">Build artifacts</div>
+      <div class="sbody" style="font-weight:600;color:#0F6E56;margin-bottom:2px">mf-react-app / dist/</div>
+      <table class="dt">
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>.vite/manifest.json</code></td><td>Maps <code>index.html</code> → hashed JS/CSS. Read by Angular host at runtime — the integration contract</td></tr>
+          <tr><td><code>assets/index-&lt;hash&gt;.js</code></td><td>React app entry bundle; injected as <code>&lt;script type="module"&gt;</code></td></tr>
+          <tr><td><code>assets/index-&lt;hash&gt;.css</code></td><td>Stylesheet; injected as <code>&lt;link rel="stylesheet"&gt;</code></td></tr>
+          <tr><td><code>index.html</code></td><td>Standalone bootstrap entry (used when running at :8080 or :3000 directly)</td></tr>
+        </tbody>
+      </table>
+      <div class="sbody" style="font-weight:600;color:#534AB7;margin-top:8px;margin-bottom:2px">mf-angular-app / dist/</div>
+      <table class="dt">
+        <thead><tr><th>File</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>manifest.json</code></td><td>Custom post-build manifest listing hashed scripts/styles — enables this shell to be consumed as a remote</td></tr>
+          <tr><td><code>main.&lt;hash&gt;.js</code> · <code>runtime.&lt;hash&gt;.js</code> · <code>polyfills.&lt;hash&gt;.js</code></td><td>Angular app bundles</td></tr>
+          <tr><td><code>styles.&lt;hash&gt;.css</code></td><td>Global styles</td></tr>
+          <tr><td><code>404.html</code></td><td>Copy of <code>index.html</code> — GitHub Pages deep-link fallback</td></tr>
+          <tr><td><code>.nojekyll</code></td><td>Prevents Jekyll from processing the dist directory</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SLIDE 10: Cross-app communication -->
+    <div class="slide">
+      <div class="stag">Communication</div>
+      <div class="stitle">Native DOM CustomEvents</div>
+      <div class="two-col">
+        <div>
+          <div class="two-col-label">Angular → React (emit)</div>
+          <pre><code class="language-typescript">// card.component.ts
+onClick() {
+  window.dispatchEvent(
+    new CustomEvent('CARD_SELECTED', {
+      detail: {
+        title: this.title,
+        content: this.content
+      }
+    })
+  );
+}
+
+// microfrontend.util.ts
+window.dispatchEvent(
+  new CustomEvent('MICROFRONTEND_RENDER', {
+    detail: { nodeToLoadIn, name }
+  })
+);</code></pre>
+        </div>
+        <div>
+          <div class="two-col-label">React → Angular (emit + listen)</div>
+          <pre><code class="language-javascript">// ContactSupport.jsx — listen
+useEffect(() => {
+  const h = (e) => setMessages(
+    prev => [...prev, {
+      type: 'card',
+      title: e.detail.title,
+      content: e.detail.content
+    }]
+  );
+  window.addEventListener('CARD_SELECTED', h);
+  return () =>
+    window.removeEventListener('CARD_SELECTED', h);
+}, []);
+
+// ContactSupport.jsx — emit
+window.dispatchEvent(
+  new CustomEvent('SUPPORT_MESSAGE_SENT', {
+    detail: { message }
+  })
+);</code></pre>
+        </div>
+      </div>
+      <div class="info-box">Angular listeners wrap callbacks in <code>this.zone.run(() => { … })</code> — required because native <code>window.addEventListener</code> runs outside Angular's zone and won't trigger change detection otherwise.</div>
+    </div>
+
+    <!-- SLIDE 11: Adding a new remote -->
+    <div class="slide">
+      <div class="stag">Extensibility</div>
+      <div class="stitle">Adding a new remote</div>
+      <div class="check-list">
+        <div class="check-item"><div class="check-circle">1</div><div class="check-body">Build remote with <code>build.manifest: true</code> in <code>vite.config.js</code>. Confirm <code>.vite/manifest.json</code> is produced in <code>dist/</code></div></div>
+        <div class="check-item"><div class="check-circle">2</div><div class="check-body">Add remote name to <code>allowedMicrofrontendNames</code> in <code>src/app/utils/microfrontend.util.ts</code></div></div>
+        <div class="check-item"><div class="check-circle">3</div><div class="check-body">Add environment entry in all four env files (<code>environment.ts</code>, <code>environment.local.ts</code>, <code>environment.development.ts</code>, <code>environment.production.ts</code>) — set <code>origin</code>, <code>manifestPath</code>, <code>buildType: 'vite'</code>, and <code>cacheStrategy</code> for deployed envs</div></div>
+        <div class="check-item"><div class="check-circle">4</div><div class="check-body">Create host component with <code>@ViewChild</code> container. On trigger, call <code>loadMicrofrontend('&lt;name&gt;', containerEl)</code></div></div>
+        <div class="check-item"><div class="check-circle">5</div><div class="check-body">In remote <code>main.jsx</code>: check <code>isBootstrap</code>; in hosted path dispatch <code>MICROFRONTEND_LOADED</code> and listen for <code>MICROFRONTEND_RENDER</code></div></div>
+        <div class="check-item"><div class="check-circle">6</div><div class="check-body">Add new remote origin to <code>isBootstrap</code> whitelist in the remote's <code>app.constants.js</code> (local port) and pathname check if deployed to a sub-path</div></div>
+        <div class="check-item"><div class="check-circle">7</div><div class="check-body"><strong>Naming invariant</strong>: the string must match across <code>environment.microfrontends['&lt;name&gt;']</code> key, <code>allowedMicrofrontendNames</code>, <code>MICROFRONTEND_LOADED detail.name</code>, and <code>MICROFRONTEND_RENDER detail.name</code> check</div></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 12: Further reading -->
+    <div class="slide">
+      <div class="stag">References</div>
+      <div class="stitle">Further reading</div>
+      <div class="pkg-grid">
+        <div class="pkg-card">
+          <a href="https://www.npmjs.com/package/vite" target="_blank">vite@5.4.9</a>
+          <p>Build tool for mf-react-app. <code>build.manifest: true</code> produces <code>.vite/manifest.json</code> — the file Angular reads at runtime to find hashed entry assets.</p>
+        </div>
+        <div class="pkg-card">
+          <a href="https://www.npmjs.com/package/@vitejs/plugin-react" target="_blank">@vitejs/plugin-react@4.3.3</a>
+          <p>Vite plugin providing React fast refresh and automatic JSX transform for mf-react-app.</p>
+        </div>
+        <div class="pkg-card">
+          <a href="https://www.npmjs.com/package/@angular/core" target="_blank">@angular/core@16.2.x</a>
+          <p>Angular 16 framework for the shell. Standalone components pattern used throughout — no feature NgModules.</p>
+        </div>
+        <div class="pkg-card">
+          <a href="https://www.npmjs.com/package/zone.js" target="_blank">zone.js@0.13.x</a>
+          <p>Angular change detection. <code>NgZone.run()</code> is required when handling native DOM <code>CustomEvent</code> callbacks to trigger Angular's update cycle.</p>
+        </div>
+        <div class="pkg-card">
+          <a href="https://www.npmjs.com/package/http-server" target="_blank">http-server@14.1.1</a>
+          <p>Serves <code>dist/</code> locally for preview mode in both apps. The Angular host fetches the React manifest from the running http-server instance.</p>
+        </div>
+        <div class="pkg-card">
+          <a href="https://www.npmjs.com/package/@angular-devkit/build-angular" target="_blank">@angular-devkit/build-angular@16.2</a>
+          <p>Angular CLI build system. Three named configurations: <code>local</code> (default), <code>development</code>, <code>production</code> — each pointing to a different React MFE origin.</p>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /sw -->
+
+  <div id="dk-ft">
+    <button class="btn-nav" id="btn-prev" onclick="mv(-1)" disabled>← prev</button>
+    <span id="sname">Cover</span>
+    <button class="btn-nav" id="btn-next" onclick="mv(1)">next →</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+<script>
+const TITLES = [
+  'Cover',
+  'System overview',
+  'Composition mechanism',
+  'Boot sequence',
+  'Manifest fetch + injection',
+  'Vite config + dual-mode',
+  'Integration layer',
+  'Shared dependencies',
+  'Build artifacts',
+  'Cross-app communication',
+  'Adding a new remote',
+  'Further reading'
+];
+
+const slides = document.querySelectorAll('.slide');
+const N = slides.length;
+let cur = 0;
+
+function go(n) {
+  slides[cur].classList.remove('active');
+  cur = Math.max(0, Math.min(N - 1, n));
+  slides[cur].classList.add('active');
+  document.getElementById('ctr').textContent = (cur + 1) + ' / ' + N;
+  document.getElementById('prog-fill').style.width = ((cur + 1) / N * 100) + '%';
+  document.getElementById('sname').textContent = TITLES[cur];
+  document.getElementById('btn-prev').disabled = cur === 0;
+  document.getElementById('btn-next').disabled = cur === N - 1;
+  if (window.Prism) Prism.highlightAll();
+}
+
+function mv(d) { go(cur + d); }
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') mv(1);
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   mv(-1);
+});
+
+if (window.Prism) Prism.highlightAll();
+</script>
+</body>
+</html>
